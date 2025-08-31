@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStress - Zero-Config Load Testing for Developers</title>
+    <meta name="description" content="Load test your API in 30 seconds. No Docker, no YAML, no cloud accounts. Just results.">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="DevStress - Zero-Config Load Testing">
+    <meta property="og:description" content="Load test your API in 30 seconds. No setup required.">
+    <meta property="og:image" content="https://devstress.com/og-image.png">
+    <meta property="og:url" content="https://devstress.com">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .code-font { font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace; }
+        .typing::after { content: '|'; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white">
+        <div class="container mx-auto px-6 py-20">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    Load Testing That
+                    <span class="block text-yellow-300">Respects Your Time</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-blue-100">
+                    Test your API under load in 30 seconds. No Docker, no YAML, no cloud accounts.
+                </p>
+                
+                <!-- Live Demo Terminal -->
+                <div class="bg-gray-900 rounded-lg p-6 max-w-2xl mx-auto text-left mb-8" x-data="{ step: 0 }" x-init="
+                    setInterval(() => {
+                        if (step < 4) step++; 
+                        else step = 0;
+                    }, 3000)
+                ">
+                    <div class="text-green-400 code-font text-sm">
+                        <div class="mb-2 flex items-center">
+                            <span class="text-gray-500">$</span>
+                            <span class="ml-2" :class="step >= 1 ? '' : 'typing'">pip install devstress</span>
+                        </div>
+                        <div class="mb-2 text-gray-400" x-show="step >= 2" x-transition>
+                            ✅ Successfully installed devstress-1.0.0
+                        </div>
+                        <div class="mb-2 flex items-center" x-show="step >= 2" x-transition>
+                            <span class="text-gray-500">$</span>
+                            <span class="ml-2" :class="step >= 3 ? '' : 'typing'">devstress test https://myapi.com --users 500</span>
+                        </div>
+                        <div x-show="step >= 4" x-transition class="text-sm">
+                            <div class="text-blue-400">🚀 DevStress Load Test Starting</div>
+                            <div class="text-blue-400">📊 Target: https://myapi.com</div>
+                            <div class="text-blue-400">👥 Users: 500</div>
+                            <div class="text-white">⚡ 847.3 RPS</div>
+                            <div class="text-white">📈 127ms avg response</div>
+                            <div class="text-green-400">✅ Test passed: Performance within acceptable limits</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#install" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        Get Started Free
+                    </a>
+                    <a href="#demo" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition">
+                        View Live Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Problem Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-12">
+                    Stop Shipping Untested APIs
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">😤</div>
+                        <h3 class="text-xl font-semibold mb-2">k6 Takes Forever</h3>
+                        <p class="text-gray-600">10 minutes to write a script, 5 minutes to run it, 15 minutes to understand the results.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">💸</div>
+                        <h3 class="text-xl font-semibold mb-2">LoadRunner Costs $500/Month</h3>
+                        <p class="text-gray-600">Enterprise tools price out indie developers and small teams.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">🤷</div>
+                        <h3 class="text-xl font-semibold mb-2">So You Skip Testing</h3>
+                        <p class="text-gray-600">80% of developers ship without load testing. Then wonder why their app crashes on launch day.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-12 p-6 bg-red-50 border border-red-200 rounded-lg">
+                    <p class="text-red-800 font-medium">
+                        "We got 500 users in the first hour and the server melted. 
+                        I wish I had tested it first." - Every developer, ever
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Solution Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                    The 30-Second Load Test
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-green-100 text-green-600 rounded-full p-2 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold mb-1">Zero Config</h3>
+                                    <p class="text-gray-600">One command. No Docker, no YAML, no account creation. Just point at your URL.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="bg-green-100 text-green-600 rounded-full p-2 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold mb-1">Instant Results</h3>
+                                    <p class="text-gray-600">Beautiful HTML reports with charts. Share with your team or embed in PRs.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="bg-green-100 text-green-600 rounded-full p-2 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold mb-1">CI/CD Ready</h3>
+                                    <p class="text-gray-600">Exit codes, JUnit XML, and GitHub Actions templates included.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="bg-green-100 text-green-600 rounded-full p-2 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold mb-1">Privacy First</h3>
+                                    <p class="text-gray-600">Runs on your machine. Your data never leaves your environment.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900 rounded-lg p-6 code-font text-sm">
+                        <div class="text-green-400">
+                            <div class="text-gray-500"># Install (one time)</div>
+                            <div class="mb-4">$ pip install devstress</div>
+                            
+                            <div class="text-gray-500"># Test your API (30 seconds)</div>
+                            <div class="mb-4">$ devstress test https://api.example.com</div>
+                            
+                            <div class="text-blue-400">🚀 DevStress Load Test Starting</div>
+                            <div class="text-blue-400">📊 Target: https://api.example.com</div>
+                            <div class="text-blue-400">👥 Users: 100 | ⏱️ Duration: 30s</div>
+                            <div class="text-white">⚡ 247.5 RPS | 📈 85ms avg</div>
+                            <div class="text-green-400">✅ Test passed</div>
+                            <div class="text-white">📊 Report: ~/.devstress/report.html</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Installation Section -->
+    <section id="install" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">
+                    Get Started in 60 Seconds
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-8 mt-12">
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-3xl font-bold text-purple-600 mb-4">1</div>
+                        <h3 class="text-xl font-semibold mb-2">Install</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm">
+                            pip install devstress
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-3xl font-bold text-purple-600 mb-4">2</div>
+                        <h3 class="text-xl font-semibold mb-2">Test</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm">
+                            devstress test https://myapi.com
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-3xl font-bold text-purple-600 mb-4">3</div>
+                        <h3 class="text-xl font-semibold mb-2">Ship</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm">
+                            ✅ Performance validated
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comparison Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                    Why Choose DevStress?
+                </h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-200 rounded-lg overflow-hidden">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="border border-gray-200 p-4 text-left">Feature</th>
+                                <th class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <div class="font-bold text-purple-600">DevStress</div>
+                                </th>
+                                <th class="border border-gray-200 p-4 text-center">k6</th>
+                                <th class="border border-gray-200 p-4 text-center">Locust</th>
+                                <th class="border border-gray-200 p-4 text-center">LoadRunner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-200 p-4 font-medium">Setup Time</td>
+                                <td class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <span class="text-green-600 font-bold">30 seconds</span>
+                                </td>
+                                <td class="border border-gray-200 p-4 text-center">10-15 minutes</td>
+                                <td class="border border-gray-200 p-4 text-center">15-30 minutes</td>
+                                <td class="border border-gray-200 p-4 text-center">Hours</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-200 p-4 font-medium">Configuration Required</td>
+                                <td class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <span class="text-green-600 font-bold">None</span>
+                                </td>
+                                <td class="border border-gray-200 p-4 text-center">JavaScript</td>
+                                <td class="border border-gray-200 p-4 text-center">Python</td>
+                                <td class="border border-gray-200 p-4 text-center">GUI + Scripts</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-200 p-4 font-medium">Monthly Cost</td>
+                                <td class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <span class="text-green-600 font-bold">$0</span>
+                                </td>
+                                <td class="border border-gray-200 p-4 text-center">$0</td>
+                                <td class="border border-gray-200 p-4 text-center">$0</td>
+                                <td class="border border-gray-200 p-4 text-center">$500+</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-200 p-4 font-medium">Beautiful Reports</td>
+                                <td class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <span class="text-green-600">✅</span>
+                                </td>
+                                <td class="border border-gray-200 p-4 text-center">❌</td>
+                                <td class="border border-gray-200 p-4 text-center">Basic</td>
+                                <td class="border border-gray-200 p-4 text-center">✅</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-200 p-4 font-medium">CI/CD Integration</td>
+                                <td class="border border-gray-200 p-4 text-center bg-purple-50">
+                                    <span class="text-green-600">✅</span>
+                                </td>
+                                <td class="border border-gray-200 p-4 text-center">Manual</td>
+                                <td class="border border-gray-200 p-4 text-center">Manual</td>
+                                <td class="border border-gray-200 p-4 text-center">Enterprise</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Examples Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                    Real-World Examples
+                </h2>
+                
+                <div class="space-y-8">
+                    <!-- Basic API Test -->
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-4">🚀 Basic API Load Test</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm mb-4">
+                            devstress test https://api.myapp.com/health
+                        </div>
+                        <p class="text-gray-600">Perfect for quick health checks before deployment. Uses 100 users for 30 seconds by default.</p>
+                    </div>
+                    
+                    <!-- Spike Test -->
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-4">📈 Spike Testing</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm mb-4">
+                            devstress test https://api.myapp.com --users 1000 --scenario spike --duration 60
+                        </div>
+                        <p class="text-gray-600">Simulate sudden traffic spikes (like going viral on social media). Hits your API immediately with full load.</p>
+                    </div>
+                    
+                    <!-- CI/CD Integration -->
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-4">⚙️ GitHub Actions Integration</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm mb-4">
+                            - name: Load Test API<br>
+                            &nbsp;&nbsp;run: devstress test ${{ env.STAGING_URL }} --users 200<br>
+                            &nbsp;&nbsp;continue-on-error: false
+                        </div>
+                        <p class="text-gray-600">Automatically test performance on every deployment. Fails the build if response times are too high.</p>
+                    </div>
+                    
+                    <!-- Custom Headers -->
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-4">🔐 Authenticated API Testing</h3>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded code-font text-sm mb-4">
+                            devstress test https://api.myapp.com/protected \\<br>
+                            &nbsp;&nbsp;--header "Authorization: Bearer token123" \\<br>
+                            &nbsp;&nbsp;--users 50
+                        </div>
+                        <p class="text-gray-600">Test authenticated endpoints by passing custom headers. Perfect for API keys or JWT tokens.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-6 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Stop Shipping Untested Code
+                </h2>
+                <p class="text-xl mb-8 text-blue-100">
+                    Join thousands of developers who test their APIs before their users do.
+                </p>
+                
+                <div class="bg-gray-900 rounded-lg p-6 max-w-lg mx-auto mb-8">
+                    <div class="code-font text-green-400 text-left">
+                        <div class="text-gray-500"># Get started now</div>
+                        <div>$ pip install devstress</div>
+                        <div>$ devstress test https://myapi.com</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="https://github.com/devstress/devstress" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        View on GitHub
+                    </a>
+                    <a href="/docs" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition">
+                        Read the Docs
+                    </a>
+                </div>
+                
+                <p class="text-sm text-blue-200 mt-6">
+                    Free forever. No accounts. No tracking. Open source.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">DevStress</h3>
+                    <p class="text-sm">Zero-config load testing for developers who ship.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-white mb-3">Product</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/docs" class="hover:text-white transition">Documentation</a></li>
+                        <li><a href="/examples" class="hover:text-white transition">Examples</a></li>
+                        <li><a href="/pricing" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="/changelog" class="hover:text-white transition">Changelog</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-white mb-3">Resources</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/blog" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="/guides" class="hover:text-white transition">Guides</a></li>
+                        <li><a href="/community" class="hover:text-white transition">Community</a></li>
+                        <li><a href="/support" class="hover:text-white transition">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://github.com/devstress/devstress" class="hover:text-white transition">GitHub</a></li>
+                        <li><a href="https://twitter.com/devstress" class="hover:text-white transition">Twitter</a></li>
+                        <li><a href="https://discord.gg/devstress" class="hover:text-white transition">Discord</a></li>
+                        <li><a href="mailto:hello@devstress.com" class="hover:text-white transition">Email</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 DevStress. MIT License. Built for developers, by developers.</p>
+            </div>
+        </div>
+    </footer>
+    
+</body>
+</html>
