@@ -63,9 +63,7 @@ class SystemResources:
             limit=min(users * 2, 1000),  # Total connection pool
             limit_per_host=min(users, 500),  # Per-host limit
             ttl_dns_cache=300,
-            enable_cleanup_closed=True,
-            force_close=True,
-            keepalive_timeout=30
+            enable_cleanup_closed=True
         )
 
 class RateLimiter:
