@@ -1,0 +1,160 @@
+# Claude Flow Configuration for DevStress
+# Automated load testing workflows for CI/CD
+
+name: devstress-load-testing
+version: 1.0.0
+description: Automated API load testing with DevStress
+
+workflows:
+  # Basic health check
+  health-check:
+    description: Quick health check of API endpoints
+    steps:
+      - name: Test API availability
+        run: devstress $API_URL --users 10 --duration 5
+        expect:
+          error_rate: "< 5%"
+          response_time: "< 2000ms"
+  
+  # Pre-deployment validation
+  pre-deploy:
+    description: Load test before deployment
+    steps:
+      - name: Baseline test
+        run: devstress $STAGING_URL --users 50 --duration 30
+        capture:
+          - requests_per_second
+          - avg_response_time
+          - error_rate
+      
+      - name: Stress test
+        run: devstress $STAGING_URL --users 200 --duration 60
+        expect:
+          error_rate: "< 10%"
+          p95_response_time: "< 5000ms"
+      
+      - name: Rate limit test
+        run: devstress $STAGING_URL --rps 100 --duration 30
+        expect:
+          actual_rps: ">= 90"  # Allow 10% variance
+  
+  # Post-deployment validation
+  post-deploy:
+    description: Validate production after deployment
+    steps:
+      - name: Smoke test
+        run: devstress $PROD_URL --users 5 --duration 10
+        expect:
+          error_rate: "0%"
+          
+      - name: Gradual ramp
+        run: devstress $PROD_URL --users 100 --scenario ramp --duration 120
+        monitor:
+          - alert_on_error_rate: "> 5%"
+          - alert_on_response_time: "> 3000ms"
+  
+  # Continuous monitoring
+  monitor:
+    description: Periodic load testing for monitoring
+    schedule: "*/30 * * * *"  # Every 30 minutes
+    steps:
+      - name: Health probe
+        run: devstress $PROD_URL --users 20 --duration 15
+        report:
+          - send_to: metrics.datadog.com
+          - format: json
+  
+  # Performance regression testing
+  regression:
+    description: Compare performance between versions
+    steps:
+      - name: Test current version
+        run: devstress $CURRENT_URL --users 100 --duration 60
+        capture_as: current_metrics
+        
+      - name: Test new version
+        run: devstress $NEW_URL --users 100 --duration 60
+        capture_as: new_metrics
+        
+      - name: Compare results
+        compare:
+          - metric: requests_per_second
+            threshold: "-10%"  # No more than 10% degradation
+          - metric: p95_response_time
+            threshold: "+20%"  # No more than 20% increase
+
+# Integration with CI/CD systems
+integrations:
+  github-actions:
+    on: [push, pull_request]
+    jobs:
+      test:
+        steps:
+          - uses: actions/checkout@v3
+          - name: Install DevStress
+            run: pip install devstress
+          - name: Run load tests
+            run: devstress ${{ secrets.API_URL }} --users 50 --duration 30
+          - name: Check results
+            run: |
+              if [ $? -ne 0 ]; then
+                echo "Load test failed"
+                exit 1
+              fi
+  
+  jenkins:
+    pipeline:
+      stages:
+        - stage: "Load Test"
+          steps:
+            - sh: "pip install devstress"
+            - sh: "devstress ${API_URL} --users 100 --duration 60"
+            - publishHTML:
+                target: "Load Test Report"
+                files: "~/.devstress/report_*.html"
+  
+  gitlab-ci:
+    load_test:
+      stage: test
+      script:
+        - pip install devstress
+        - devstress $CI_ENVIRONMENT_URL --users 50 --duration 30
+      artifacts:
+        paths:
+          - ~/.devstress/report_*.html
+        reports:
+          performance: report.json
+
+# Alert configurations
+alerts:
+  slack:
+    webhook: $SLACK_WEBHOOK_URL
+    conditions:
+      - error_rate: "> 5%"
+        message: "⚠️ High error rate detected: {error_rate}%"
+      - p95_response_time: "> 3000ms"
+        message: "🐌 Slow response times: P95 = {p95_response_time}ms"
+  
+  pagerduty:
+    api_key: $PAGERDUTY_API_KEY
+    conditions:
+      - error_rate: "> 20%"
+        severity: critical
+      - requests_per_second: "< 10"
+        severity: warning
+
+# Custom metrics export
+metrics:
+  prometheus:
+    enabled: true
+    endpoint: /metrics
+    labels:
+      - environment
+      - version
+      - endpoint
+  
+  datadog:
+    api_key: $DATADOG_API_KEY
+    tags:
+      - "tool:devstress"
+      - "team:platform"

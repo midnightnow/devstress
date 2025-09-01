@@ -4,6 +4,7 @@ Basic tests for DevStress
 
 import pytest
 import asyncio
+import time
 from unittest.mock import Mock, patch
 import sys
 import os
@@ -40,18 +41,19 @@ def test_system_resources():
 @pytest.mark.asyncio
 async def test_rate_limiter():
     """Test rate limiting functionality"""
-    rate_limiter = RateLimiter(10)  # 10 requests per second
+    rate_limiter = RateLimiter(2)  # 2 requests per second for clearer test
     
-    start_time = asyncio.get_event_loop().time()
+    start_time = time.time()
     
-    # Try to acquire 5 tokens quickly
+    # Try to acquire 5 tokens
+    # At 2/sec: first 2 are immediate, then 0.5s, 1s, 1.5s
     for _ in range(5):
         await rate_limiter.acquire()
     
-    elapsed = asyncio.get_event_loop().time() - start_time
+    elapsed = time.time() - start_time
     
-    # Should take at least 0.4 seconds for 5 tokens at 10/sec rate
-    assert elapsed >= 0.3  # Small buffer for timing
+    # Should take at least 1.5 seconds for 5 tokens at 2/sec rate
+    assert elapsed >= 1.4  # Small buffer for timing variations
 
 @pytest.mark.asyncio
 async def test_worker_basic():
@@ -64,14 +66,20 @@ async def test_worker_basic():
     assert len(worker.response_times) == 0
     assert len(worker.errors) == 0
 
-def test_connector_optimization():
+@pytest.mark.asyncio
+async def test_connector_optimization():
     """Test connector optimization based on user count"""
+    # Need to run in async context for aiohttp
     connector_10 = SystemResources.optimize_connector(10)
     connector_1000 = SystemResources.optimize_connector(1000)
     
     # Check that limits scale with user count
     assert connector_10.limit <= connector_1000.limit
     assert connector_10._limit_per_host <= connector_1000._limit_per_host
+    
+    # Clean up
+    await connector_10.close()
+    await connector_1000.close()
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
