@@ -4,9 +4,23 @@
 
 Load test your API in 30 seconds. No setup, no configuration files, no cloud accounts. Just run and get results.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Python](https://img.shields.io/badge/python-3.7%2B-green)
-![License](https://img.shields.io/badge/license-MIT-orange)
+[![PyPI version](https://badge.fury.io/py/devstress.svg)](https://badge.fury.io/py/devstress)
+[![Python](https://img.shields.io/pypi/pyversions/devstress.svg)](https://pypi.org/project/devstress/)
+[![License](https://img.shields.io/pypi/l/devstress.svg)](https://github.com/midnightnow/devstress/blob/main/LICENSE)
+[![CI](https://github.com/midnightnow/devstress/workflows/CI/badge.svg)](https://github.com/midnightnow/devstress/actions)
+[![Downloads](https://pepy.tech/badge/devstress)](https://pepy.tech/project/devstress)
+
+## 🏃‍♂️ Quick Start
+
+```bash
+# Install
+pip install devstress
+
+# Test any API instantly  
+devstress https://api.example.com
+
+# That's it. You're load testing.
+```
 
 ## Why DevStress?
 

@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 import psutil
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 @dataclass
 class TestConfig:
@@ -636,8 +636,12 @@ async def main():
         print(f"\n❌ Test failed: {e}")
         sys.exit(1)
 
-if __name__ == "__main__":
+def cli_main():
+    """Synchronous entry point for console script"""
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         sys.exit(130)
+
+if __name__ == "__main__":
+    cli_main()
